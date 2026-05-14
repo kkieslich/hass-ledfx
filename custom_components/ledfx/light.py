@@ -11,11 +11,9 @@ from homeassistant.components.light import (
     ATTR_EFFECT,
     ATTR_RGBW_COLOR,
     ENTITY_ID_FORMAT,
-    SUPPORT_BRIGHTNESS,
-    SUPPORT_COLOR,
-    SUPPORT_EFFECT,
     ColorMode,
     LightEntity,
+    LightEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_OFF, STATE_ON
@@ -118,11 +116,12 @@ class LedFxLight(LedFxEntity, LightEntity):
 
         self._attr_device_info = entity.device_info
 
-        self._attr_supported_features = SUPPORT_EFFECT | SUPPORT_BRIGHTNESS
+        self._attr_supported_features = LightEntityFeature.EFFECT
+        self._attr_supported_color_modes = {ColorMode.BRIGHTNESS}
+        self._attr_color_mode = ColorMode.BRIGHTNESS
 
         if updater.version == Version.V2:
-            self._attr_supported_features |= SUPPORT_COLOR
-            self._attr_supported_color_modes = {ColorMode.RGBW, ColorMode.ONOFF}
+            self._attr_supported_color_modes = {ColorMode.RGBW}
             self._attr_color_mode = ColorMode.RGBW
 
         self._attr_is_on = updater.data.get(

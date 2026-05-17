@@ -344,14 +344,21 @@ class LedFxLight(LedFxEntity, LightEntity):
                     self._attr_rgbw_color
                 )  # type: ignore
 
-            self._attr_extra_state_attributes = {
-                code: value
-                for code, value in self._updater.data.get(
-                    f"{self._attr_device_code}_{ATTR_LIGHT_EFFECT_CONFIG}", {}
-                ).items()
-                if code != ATTR_BRIGHTNESS
-            } | self._updater.data.get(
-                f"{self._attr_device_code}_{ATTR_LIGHT_CONFIG}", {}
+            self._attr_extra_state_attributes = (
+                {
+                    code: value
+                    for code, value in self._updater.data.get(
+                        f"{self._attr_device_code}_{ATTR_LIGHT_EFFECT_CONFIG}", {}
+                    ).items()
+                    if code != ATTR_BRIGHTNESS
+                }
+                | self._updater.data.get(
+                    f"{self._attr_device_code}_{ATTR_LIGHT_CONFIG}", {}
+                )
+                | {
+                    ATTR_LEDFX_DEVICE: self._attr_device_code,
+                    ATTR_LEDFX_ENTITY_TYPE: "device",
+                }
             )
 
             if ATTR_BRIGHTNESS not in kwargs and ATTR_RGBW_COLOR not in kwargs:

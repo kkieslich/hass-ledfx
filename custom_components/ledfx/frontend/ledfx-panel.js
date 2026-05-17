@@ -23,11 +23,33 @@ class LedFxPanel extends HTMLElement {
   }
 
   _isLedFxEntity(stateObj) {
-    return stateObj?.attributes?.attribution === "Data provided by LedFx";
+    if (!stateObj?.entity_id) {
+      return false;
+    }
+
+    return Boolean(
+      stateObj.attributes?.attribution === "Data provided by LedFx" ||
+        stateObj.attributes?.ledfx_device ||
+        stateObj.attributes?.ledfx_entity_type ||
+        stateObj.entity_id.includes(".ledfx_")
+    );
   }
 
   _deviceCode(stateObj) {
-    return stateObj.attributes.ledfx_device || stateObj.attributes.device;
+    if (stateObj.attributes.ledfx_device || stateObj.attributes.device) {
+      return stateObj.attributes.ledfx_device || stateObj.attributes.device;
+    }
+
+    const [domain, objectId] = stateObj.entity_id.split(".");
+    if (!objectId?.startsWith("ledfx_")) {
+      return undefined;
+    }
+
+    if (domain === "light") {
+      return objectId;
+    }
+
+    return objectId.replace(/^ledfx_[^_]+_/, "");
   }
 
   _buildModel() {

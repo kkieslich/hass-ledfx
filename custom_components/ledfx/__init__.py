@@ -129,21 +129,21 @@ async def _async_register_panel(hass: HomeAssistant) -> None:
         )
         hass.data[DOMAIN][PANEL_STATIC_REGISTERED] = True
 
-    if frontend.async_panel_exists(hass, PANEL_URL_PATH):
-        hass.data[DOMAIN][PANEL_REGISTERED] = True
+    try:
+        await panel_custom.async_register_panel(
+            hass=hass,
+            frontend_url_path=PANEL_URL_PATH,
+            webcomponent_name=PANEL_WEB_COMPONENT,
+            sidebar_title=NAME,
+            sidebar_icon="mdi:led-strip-variant",
+            module_url=f"{PANEL_STATIC_PATH}/ledfx-panel.js",
+            require_admin=False,
+            config={"domain": DOMAIN},
+        )
+    except ValueError as err:
+        if "Overwriting panel" not in str(err):
+            raise
 
-        return
-
-    await panel_custom.async_register_panel(
-        hass=hass,
-        frontend_url_path=PANEL_URL_PATH,
-        webcomponent_name=PANEL_WEB_COMPONENT,
-        sidebar_title=NAME,
-        sidebar_icon="mdi:led-strip-variant",
-        module_url=f"{PANEL_STATIC_PATH}/ledfx-panel.js",
-        require_admin=False,
-        config={"domain": DOMAIN},
-    )
     hass.data[DOMAIN][PANEL_REGISTERED] = True
 
 
@@ -197,7 +197,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             isinstance(value, dict) and UPDATER in value
             for value in hass.data[DOMAIN].values()
         ):
-            frontend.async_remove_panel(hass, PANEL_URL_PATH, warn_if_unknown=False)
+            if hasattr(frontend, "async_remove_panel"):
+                frontend.async_remove_panel(
+                    hass, PANEL_URL_PATH, warn_if_unknown=False
+                )
             hass.data[DOMAIN].pop(PANEL_REGISTERED, None)
 
     return is_unload

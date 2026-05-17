@@ -21,6 +21,9 @@ from .const import (
     ATTR_FIELD_EFFECTS,
     ATTR_FIELD_OPTIONS,
     ATTR_FIELD_TYPE,
+    ATTR_LEDFX_DEVICE,
+    ATTR_LEDFX_ENTITY_TYPE,
+    ATTR_LEDFX_SUPPORTED_EFFECTS,
     ATTR_LIGHT_EFFECT,
     ATTR_LIGHT_EFFECT_CONFIG,
     ATTR_LIGHT_STATE,
@@ -151,10 +154,15 @@ class LedFxSelect(LedFxEntity, SelectEntity):
 
             self._attr_extra_state_attributes = {
                 ATTR_DEVICE: self._attr_device_code,
+                ATTR_LEDFX_DEVICE: self._attr_device_code,
+                ATTR_LEDFX_ENTITY_TYPE: "effect_control",
                 ATTR_FIELD_EFFECTS: entity.extra.get(ATTR_FIELD_EFFECTS, [])
                 if entity.extra
                 else [],
             }
+            self._attr_extra_state_attributes[ATTR_LEDFX_SUPPORTED_EFFECTS] = (
+                self._attr_extra_state_attributes[ATTR_FIELD_EFFECTS]
+            )
 
             self._attr_available = bool(
                 updater.data.get(ATTR_STATE, False)

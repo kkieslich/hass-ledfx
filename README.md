@@ -9,8 +9,8 @@ Component for deep integration [LedFx](https://github.com/LedFx/LedFx) from [Hom
 * LedFx version >= [0.10.7](https://github.com/LedFx/LedFx/releases/tag/v0.10.7)
 
 ## Important information
-* ❗ Effect controls (number, switch, select) are disabled by default. They must be enabled manually.
-* ❗ Controls (number, switch, select) if enabled, have the status `UNAVAILABLE` by default. After enabling the effect on the device, the status will be changed by those that are supported by this effect.
+* Effect controls (number, switch, select) are created automatically for LedFX devices and virtuals.
+* Controls that are not supported by the active effect have the status `UNAVAILABLE`. The bundled LedFX sidebar panel hides unavailable controls and updates as devices, virtuals, effects, and scenes change.
 
 ## More info
 
@@ -38,6 +38,4 @@ To connect, enter the ip address and port. And also if you use basic auth, enter
 ## Performance
 ![](/images/performance.gif)
 
-1. Install [lovelace-auto-entities](https://github.com/thomasloven/lovelace-auto-entities) from HACS
-2. Install [light-entity-card](https://github.com/ljmerza/light-entity-card) from HACS
-3. Add new Lovelace card before that replacing `device`: [example](https://gist.github.com/dmamontov/34d252351d9eda98f53b2d6180771f12)
+The integration registers a `LedFX` sidebar panel automatically. No Lovelace card or dashboard YAML is required for normal use.

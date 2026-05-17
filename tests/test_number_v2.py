@@ -95,9 +95,9 @@ async def test_effect_property(hass: HomeAssistant) -> None:
         unique_id: str = _generate_id("wled_blur", updater.ip)
         entry: er.RegistryEntry | None = registry.async_get(unique_id)
 
-        assert hass.states.get(unique_id) is None
+        assert hass.states.get(unique_id) is not None
         assert entry is not None
-        assert entry.disabled_by == er.RegistryEntryDisabler.INTEGRATION
+        assert entry.disabled_by is None
 
         registry.async_update_entity(entity_id=unique_id, disabled_by=None)
         await hass.async_block_till_done()
@@ -170,9 +170,9 @@ async def test_effect_property_disabled_light(hass: HomeAssistant) -> None:
         unique_id: str = _generate_id("wled_1_band_count", updater.ip)
         entry: er.RegistryEntry | None = registry.async_get(unique_id)
 
-        assert hass.states.get(unique_id) is None
+        assert hass.states.get(unique_id) is not None
         assert entry is not None
-        assert entry.disabled_by == er.RegistryEntryDisabler.INTEGRATION
+        assert entry.disabled_by is None
 
         registry.async_update_entity(entity_id=unique_id, disabled_by=None)
         await hass.async_block_till_done()

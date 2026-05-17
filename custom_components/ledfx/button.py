@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ATTR_STATE, SIGNAL_NEW_BUTTON
+from .const import ATTR_LEDFX_ENTITY_TYPE, ATTR_STATE, SIGNAL_NEW_BUTTON
 from .entity import LedFxEntity
 from .enum import ActionType
 from .updater import LedFxEntityDescription, LedFxUpdater, async_get_updater
@@ -84,6 +84,10 @@ class LedFxButton(LedFxEntity, ButtonEntity):
 
         self._attr_device_info = entity.device_info
         self._type = entity.type
+        if entity.type == ActionType.SCENE:
+            self._attr_extra_state_attributes = {
+                ATTR_LEDFX_ENTITY_TYPE: "scene",
+            }
 
     def _handle_coordinator_update(self) -> None:
         """Update state."""

@@ -31,6 +31,8 @@ from .const import (
     ATTR_LIGHT_EFFECT_CONFIG,
     ATTR_LIGHT_EFFECTS,
     ATTR_LIGHT_STATE,
+    ATTR_LEDFX_DEVICE,
+    ATTR_LEDFX_ENTITY_TYPE,
     ATTR_STATE,
     SIGNAL_NEW_DEVICE,
 )
@@ -144,9 +146,14 @@ class LedFxLight(LedFxEntity, LightEntity):
         self._attr_effect = updater.data.get(
             f"{self._attr_device_code}_{ATTR_LIGHT_EFFECT}"
         )
-        self._attr_extra_state_attributes = updater.data.get(
-            f"{self._attr_device_code}_{ATTR_LIGHT_EFFECT_CONFIG}", {}
-        ) | updater.data.get(f"{self._attr_device_code}_{ATTR_LIGHT_CONFIG}", {})
+        self._attr_extra_state_attributes = (
+            updater.data.get(f"{self._attr_device_code}_{ATTR_LIGHT_EFFECT_CONFIG}", {})
+            | updater.data.get(f"{self._attr_device_code}_{ATTR_LIGHT_CONFIG}", {})
+            | {
+                ATTR_LEDFX_DEVICE: self._attr_device_code,
+                ATTR_LEDFX_ENTITY_TYPE: "device",
+            }
+        )
 
     def _handle_coordinator_update(self) -> None:
         """Update state."""
@@ -174,13 +181,22 @@ class LedFxLight(LedFxEntity, LightEntity):
         effect: str | None = self._updater.data.get(
             f"{self._attr_device_code}_{ATTR_LIGHT_EFFECT}"
         )
-        attributes: dict = {
-            code: value
-            for code, value in self._updater.data.get(
-                f"{self._attr_device_code}_{ATTR_LIGHT_EFFECT_CONFIG}", {}
-            ).items()
-            if code != ATTR_BRIGHTNESS
-        } | self._updater.data.get(f"{self._attr_device_code}_{ATTR_LIGHT_CONFIG}", {})
+        attributes: dict = (
+            {
+                code: value
+                for code, value in self._updater.data.get(
+                    f"{self._attr_device_code}_{ATTR_LIGHT_EFFECT_CONFIG}", {}
+                ).items()
+                if code != ATTR_BRIGHTNESS
+            }
+            | self._updater.data.get(
+                f"{self._attr_device_code}_{ATTR_LIGHT_CONFIG}", {}
+            )
+            | {
+                ATTR_LEDFX_DEVICE: self._attr_device_code,
+                ATTR_LEDFX_ENTITY_TYPE: "device",
+            }
+        )
 
         if (  # pylint: disable=too-many-boolean-expressions
             self._attr_is_on == is_on

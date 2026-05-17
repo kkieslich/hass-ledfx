@@ -6,7 +6,9 @@
   ],
   "config_flow": true,
   "dependencies": [
-    "http"
+    "frontend",
+    "http",
+    "panel_custom"
   ],
   "documentation": "https://github.com/dmamontov/hass-ledfx/wiki",
   "iot_class": "local_polling",
